@@ -1,37 +1,28 @@
-import prisma from "../../lib/prisma";
-import bcrypt from "bcryptjs";
-import { UserStatus } from "../../generated/prisma/client"
+import prisma from "../../lib/prisma"
+import { randomUUID } from "crypto"
 
 export async function userSeeders() {
-
-  const password1 = await bcrypt.hash("123456", 10)
-  const password2 = await bcrypt.hash("123457", 10)
-
-  const userData = [
-    {
-      name: "Super Admin",
-      email: "superadmin@gmail.com",
-      password: password1,
-      role_id: 1,
-      contract_number: 1740556525,
-      status: UserStatus.ACTIVE,
-    },
-    {
-      name: "Admin",
-      email: "admin@gmail.com",
-      password: password2,
-      role_id: 2,
-      contract_number: 1740556526,
-      status: UserStatus.ACTIVE,
-    },
-  ]
-
-  const users = await prisma.users.createMany({
-    data: userData.map(user => ({
-      ...user,
-      created_at: new Date(),
-      updated_at: new Date(),
-    })),
+  const users = await prisma.user.createMany({
+    data: [
+      {
+        id: randomUUID(),
+        name: "Super Admin",
+        email: "bishwajitsarkar99@gmail.com",
+        emailVerified: true,
+        contractNumber: "1740003227",
+        role: "SUPER ADMIN",
+        status: 0,
+      },
+      {
+        id: randomUUID(),
+        name: "Admin",
+        email: "admin@gmail.com",
+        emailVerified: true,
+        contractNumber: "1740556526",
+        role: "ADMIN",
+        status: 0,
+      },
+    ],
     skipDuplicates: true,
   })
 

@@ -10,122 +10,74 @@ datasource db {
 /////////////////////////////
 //  User
 /////////////////////////////
-model users {
-  id                           Int                   @id @default(autoincrement())
-  name                         String?
-  email                        String                @unique
-  password                     String
-  role_id                      Int
-  email_verified_at            DateTime?
-  contract_number              Int?
-  image                        String?
-  remember_token               String?
-  reference_email              String?
-  login_email                  String?
-  mailing_email                String?
-  status                       UserStatus            @default(INACTIVE)
-  branch_id                    Int?
-  created_at                   DateTime              @default(now())
-  updated_at                   DateTime
-  branch_categories_created_by branch_categories[]   @relation("branch_categories_created_by")
-  branch_categories_updated_by branch_categories[]   @relation("branch_categories_updated_by")
-  branches_created_byTousers   branches[]            @relation("branches_created_by")
-  branches_updated_byTousers   branches[]            @relation("branches_updated_by")
-  users_id                     branches?             @relation("branch_id", fields: [branch_id], references: [id], onDelete: Cascade)
-  roles                        roles                 @relation(fields: [role_id], references: [id], onDelete: Cascade)
-  email_verifications          email_verifications[]
-  sessions sessions[]
+model User {
+  id             String    @id 
+  name           String
+  email          String
+  emailVerified  Boolean   @default(false)
+  image          String?
+  contractNumber String?
+  role           String    
+  status         Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  sessions       Session[]
+  accounts       Account[]
+
+  @@unique([email])
+  @@map("user")
 }
-
 /////////////////////////////
-//  Role
+//  Session
 /////////////////////////////
-model roles {
-  id                  Int                   @id @default(autoincrement())
-  role_name           String
-  status              Int                   @default(0)
-  created_at          DateTime              @default(now())
-  updated_at          DateTime
-  users               users[]
-  email_verifications email_verifications[]
-}
-
-/////////////////////////////
-//  Branch Category
-/////////////////////////////
-model branch_categories {
-  id                           Int        @id @default(autoincrement())
-  branch_category_name         String     @unique
-  created_by                   Int
-  updated_by                   Int
-  created_at                   DateTime   @default(now())
-  updated_at                   DateTime
-  branch_categories_created_by users      @relation("branch_categories_created_by", fields: [created_by], references: [id], onDelete: Cascade)
-  branch_categories_updated_by users      @relation("branch_categories_updated_by", fields: [updated_by], references: [id], onDelete: Cascade)
-  branches                     branches[]
-}
-
-/////////////////////////////
-//  Branch
-/////////////////////////////
-model branches {
-  id                  Int                   @id @default(autoincrement())
-  branch_code         String
-  branch_type         String
-  branch_name         String
-  division_name       String
-  district_name       String
-  upazila_name        String
-  city_name           String
-  location            String
-  branch_category_id  Int
-  created_by          Int
-  updated_by          Int
-  created_at          DateTime              @default(now())
-  updated_at          DateTime
-  branch_categories   branch_categories     @relation(fields: [branch_category_id], references: [id], onDelete: Cascade)
-  branches_created_by users                 @relation("branches_created_by", fields: [created_by], references: [id], onDelete: Cascade)
-  branches_updated_by users                 @relation("branches_updated_by", fields: [updated_by], references: [id], onDelete: Cascade)
-  users_id            users[]               @relation("branch_id")
-  email_verifications email_verifications[]
-}
-
-/////////////////////////////
-//  Email Verification
-/////////////////////////////
-model email_verifications {
-  id                     Int       @id @default(autoincrement())
-  user_id                Int?
-  role_id                Int?
-  branch_id              Int?
-  name                   String?
-  email                  String?   @unique
-  email_verified_session DateTime?
-  account_create_session DateTime?
-  status                 Int       @default(0)
-  created_at             DateTime  @default(now())
-  updated_at             DateTime  @updatedAt
-  // Relations
-  user                   users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  role                   roles?    @relation(fields: [role_id], references: [id], onDelete: Cascade)
-  branch                 branches? @relation(fields: [branch_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
-}
-
-/////////////////////////////
-//  Sessions
-/////////////////////////////
-model sessions {
-  id        String   @id @default(uuid())
-  user_id   Int
-  user      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model Session {
+  id        String   @id
   expiresAt DateTime
+  token     String
   createdAt DateTime @default(now())
-}
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-enum UserStatus {
-  INACTIVE
-  ACTIVE
-  SUSPENDED
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+/////////////////////////////
+//  Account
+/////////////////////////////
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+/////////////////////////////
+//  Verification
+/////////////////////////////
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

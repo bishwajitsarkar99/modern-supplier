@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n/////////////////////////////\n//  User\n/////////////////////////////\nmodel users {\n  id                           Int                   @id @default(autoincrement())\n  name                         String?\n  email                        String                @unique\n  password                     String\n  role_id                      Int\n  email_verified_at            DateTime?\n  contract_number              Int?\n  image                        String?\n  remember_token               String?\n  reference_email              String?\n  login_email                  String?\n  mailing_email                String?\n  status                       UserStatus            @default(INACTIVE)\n  branch_id                    Int?\n  created_at                   DateTime              @default(now())\n  updated_at                   DateTime\n  branch_categories_created_by branch_categories[]   @relation(\"branch_categories_created_by\")\n  branch_categories_updated_by branch_categories[]   @relation(\"branch_categories_updated_by\")\n  branches_created_byTousers   branches[]            @relation(\"branches_created_by\")\n  branches_updated_byTousers   branches[]            @relation(\"branches_updated_by\")\n  users_id                     branches?             @relation(\"branch_id\", fields: [branch_id], references: [id], onDelete: Cascade)\n  roles                        roles                 @relation(fields: [role_id], references: [id], onDelete: Cascade)\n  email_verifications          email_verifications[]\n  sessions                     sessions[]\n}\n\n/////////////////////////////\n//  Role\n/////////////////////////////\nmodel roles {\n  id                  Int                   @id @default(autoincrement())\n  role_name           String\n  status              Int                   @default(0)\n  created_at          DateTime              @default(now())\n  updated_at          DateTime\n  users               users[]\n  email_verifications email_verifications[]\n}\n\n/////////////////////////////\n//  Branch Category\n/////////////////////////////\nmodel branch_categories {\n  id                           Int        @id @default(autoincrement())\n  branch_category_name         String     @unique\n  created_by                   Int\n  updated_by                   Int\n  created_at                   DateTime   @default(now())\n  updated_at                   DateTime\n  branch_categories_created_by users      @relation(\"branch_categories_created_by\", fields: [created_by], references: [id], onDelete: Cascade)\n  branch_categories_updated_by users      @relation(\"branch_categories_updated_by\", fields: [updated_by], references: [id], onDelete: Cascade)\n  branches                     branches[]\n}\n\n/////////////////////////////\n//  Branch\n/////////////////////////////\nmodel branches {\n  id                  Int                   @id @default(autoincrement())\n  branch_code         String\n  branch_type         String\n  branch_name         String\n  division_name       String\n  district_name       String\n  upazila_name        String\n  city_name           String\n  location            String\n  branch_category_id  Int\n  created_by          Int\n  updated_by          Int\n  created_at          DateTime              @default(now())\n  updated_at          DateTime\n  branch_categories   branch_categories     @relation(fields: [branch_category_id], references: [id], onDelete: Cascade)\n  branches_created_by users                 @relation(\"branches_created_by\", fields: [created_by], references: [id], onDelete: Cascade)\n  branches_updated_by users                 @relation(\"branches_updated_by\", fields: [updated_by], references: [id], onDelete: Cascade)\n  users_id            users[]               @relation(\"branch_id\")\n  email_verifications email_verifications[]\n}\n\n/////////////////////////////\n//  Email Verification\n/////////////////////////////\nmodel email_verifications {\n  id                     Int       @id @default(autoincrement())\n  user_id                Int?\n  role_id                Int?\n  branch_id              Int?\n  name                   String?\n  email                  String?   @unique\n  email_verified_session DateTime?\n  account_create_session DateTime?\n  status                 Int       @default(0)\n  created_at             DateTime  @default(now())\n  updated_at             DateTime  @updatedAt\n  // Relations\n  user                   users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  role                   roles?    @relation(fields: [role_id], references: [id], onDelete: Cascade)\n  branch                 branches? @relation(fields: [branch_id], references: [id], onDelete: Cascade)\n\n  @@index([user_id])\n}\n\n/////////////////////////////\n//  Sessions\n/////////////////////////////\nmodel sessions {\n  id        String   @id @default(uuid())\n  user_id   Int\n  user      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n}\n\nenum UserStatus {\n  INACTIVE\n  ACTIVE\n  SUSPENDED\n}\n",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n/////////////////////////////\n//  User\n/////////////////////////////\nmodel User {\n  id             String    @id\n  name           String\n  email          String\n  emailVerified  Boolean   @default(false)\n  image          String?\n  contractNumber String?\n  role           String\n  status         Int       @default(0)\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n  sessions       Session[]\n  accounts       Account[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\n/////////////////////////////\n//  Session\n/////////////////////////////\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@index([userId])\n  @@map(\"session\")\n}\n\n/////////////////////////////\n//  Account\n/////////////////////////////\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@index([userId])\n  @@map(\"account\")\n}\n\n/////////////////////////////\n//  Verification\n/////////////////////////////\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([identifier])\n  @@map(\"verification\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"users\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email_verified_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"contract_number\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"remember_token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reference_email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"login_email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"mailing_email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"branch_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"branch_categories_created_by\",\"kind\":\"object\",\"type\":\"branch_categories\",\"relationName\":\"branch_categories_created_by\"},{\"name\":\"branch_categories_updated_by\",\"kind\":\"object\",\"type\":\"branch_categories\",\"relationName\":\"branch_categories_updated_by\"},{\"name\":\"branches_created_byTousers\",\"kind\":\"object\",\"type\":\"branches\",\"relationName\":\"branches_created_by\"},{\"name\":\"branches_updated_byTousers\",\"kind\":\"object\",\"type\":\"branches\",\"relationName\":\"branches_updated_by\"},{\"name\":\"users_id\",\"kind\":\"object\",\"type\":\"branches\",\"relationName\":\"branch_id\"},{\"name\":\"roles\",\"kind\":\"object\",\"type\":\"roles\",\"relationName\":\"rolesTousers\"},{\"name\":\"email_verifications\",\"kind\":\"object\",\"type\":\"email_verifications\",\"relationName\":\"email_verificationsTousers\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"sessions\",\"relationName\":\"sessionsTousers\"}],\"dbName\":null},\"roles\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"role_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"rolesTousers\"},{\"name\":\"email_verifications\",\"kind\":\"object\",\"type\":\"email_verifications\",\"relationName\":\"email_verificationsToroles\"}],\"dbName\":null},\"branch_categories\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"branch_category_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_by\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"updated_by\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"branch_categories_created_by\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"branch_categories_created_by\"},{\"name\":\"branch_categories_updated_by\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"branch_categories_updated_by\"},{\"name\":\"branches\",\"kind\":\"object\",\"type\":\"branches\",\"relationName\":\"branch_categoriesTobranches\"}],\"dbName\":null},\"branches\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"branch_code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"branch_type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"branch_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"division_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"district_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"upazila_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"branch_category_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_by\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"updated_by\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"branch_categories\",\"kind\":\"object\",\"type\":\"branch_categories\",\"relationName\":\"branch_categoriesTobranches\"},{\"name\":\"branches_created_by\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"branches_created_by\"},{\"name\":\"branches_updated_by\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"branches_updated_by\"},{\"name\":\"users_id\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"branch_id\"},{\"name\":\"email_verifications\",\"kind\":\"object\",\"type\":\"email_verifications\",\"relationName\":\"branchesToemail_verifications\"}],\"dbName\":null},\"email_verifications\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"role_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"branch_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email_verified_session\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"account_create_session\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"email_verificationsTousers\"},{\"name\":\"role\",\"kind\":\"object\",\"type\":\"roles\",\"relationName\":\"email_verificationsToroles\"},{\"name\":\"branch\",\"kind\":\"object\",\"type\":\"branches\",\"relationName\":\"branchesToemail_verifications\"}],\"dbName\":null},\"sessions\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"users\",\"relationName\":\"sessionsTousers\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contractNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUser\"},{\"name\":\"accounts\",\"kind\":\"object\",\"type\":\"Account\",\"relationName\":\"AccountToUser\"}],\"dbName\":\"user\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SessionToUser\"}],\"dbName\":\"session\"},\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AccountToUser\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"idToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"account\"},\"Verification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"identifier\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"verification\"}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -59,7 +59,7 @@ export interface PrismaClientConstructor {
    * ```
    * const prisma = new PrismaClient()
    * // Fetch zero or more Users
-   * const users = await prisma.users.findMany()
+   * const users = await prisma.user.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -81,7 +81,7 @@ export interface PrismaClientConstructor {
  * ```
  * const prisma = new PrismaClient()
  * // Fetch zero or more Users
- * const users = await prisma.users.findMany()
+ * const users = await prisma.user.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -175,64 +175,44 @@ export interface PrismaClient<
   }>>
 
       /**
-   * `prisma.users`: Exposes CRUD operations for the **users** model.
+   * `prisma.user`: Exposes CRUD operations for the **User** model.
     * Example usage:
     * ```ts
     * // Fetch zero or more Users
-    * const users = await prisma.users.findMany()
+    * const users = await prisma.user.findMany()
     * ```
     */
-  get users(): Prisma.usersDelegate<ExtArgs, { omit: OmitOpts }>;
+  get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
 
   /**
-   * `prisma.roles`: Exposes CRUD operations for the **roles** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Roles
-    * const roles = await prisma.roles.findMany()
-    * ```
-    */
-  get roles(): Prisma.rolesDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.branch_categories`: Exposes CRUD operations for the **branch_categories** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Branch_categories
-    * const branch_categories = await prisma.branch_categories.findMany()
-    * ```
-    */
-  get branch_categories(): Prisma.branch_categoriesDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.branches`: Exposes CRUD operations for the **branches** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Branches
-    * const branches = await prisma.branches.findMany()
-    * ```
-    */
-  get branches(): Prisma.branchesDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.email_verifications`: Exposes CRUD operations for the **email_verifications** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Email_verifications
-    * const email_verifications = await prisma.email_verifications.findMany()
-    * ```
-    */
-  get email_verifications(): Prisma.email_verificationsDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
-   * `prisma.sessions`: Exposes CRUD operations for the **sessions** model.
+   * `prisma.session`: Exposes CRUD operations for the **Session** model.
     * Example usage:
     * ```ts
     * // Fetch zero or more Sessions
-    * const sessions = await prisma.sessions.findMany()
+    * const sessions = await prisma.session.findMany()
     * ```
     */
-  get sessions(): Prisma.sessionsDelegate<ExtArgs, { omit: OmitOpts }>;
+  get session(): Prisma.SessionDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.account`: Exposes CRUD operations for the **Account** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Accounts
+    * const accounts = await prisma.account.findMany()
+    * ```
+    */
+  get account(): Prisma.AccountDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.verification`: Exposes CRUD operations for the **Verification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Verifications
+    * const verifications = await prisma.verification.findMany()
+    * ```
+    */
+  get verification(): Prisma.VerificationDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

@@ -17,6 +17,7 @@ import { DefaultImage, SeletonImage } from '@/components/default-imge';
 import { Progress } from "@/components/ui/progress"
 import MaskedInput from '@/components/input-mask/input-mask';
 import { useRouter } from "next/navigation"
+import { signUp } from "@/lib/auth-client"
 
 export default function CreateAccount() {
     // scroll
@@ -42,6 +43,7 @@ export default function CreateAccount() {
     const [isLoading, setIsLoading] = React.useState(false);
     const router = useRouter();
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const [error, setError] = React.useState<string | null>(null);
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -105,6 +107,26 @@ export default function CreateAccount() {
         }, 1000);
     };
 
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setError(null);
+
+        const formData = new FormData(e.currentTarget);
+        const firstName = formData.get("firstName") as string;
+        const lastName = formData.get("lastName") as string;
+        const res = await signUp.email({
+            name: `${firstName} ${lastName}`,
+            email: formData.get("email") as string,
+            password: formData.get("password") as string,
+        });
+
+        if (res.error) {
+        setError(res.error.message || "Something went wrong.");
+        } else {
+        router.push("/admin/dashboard");
+        }
+    }
+
 
     return (
         <Fragment>
@@ -129,11 +151,12 @@ export default function CreateAccount() {
                     </Header>
                     <Flex justifycontent="between" items="center" className={twMerge("mx-10 my-24")}>
                         <Card className={twMerge("w-full shadow-sm hover:shadow-sm rounded-md aspect-video")}>
-                            <Form className="gird grid-cols-1 gap-4 p-5">
+                            <Form onSubmit={handleSubmit} className="gird grid-cols-1 gap-4 p-5">
                                 <Flex direction="row" justify="center" gap={4}>
                                     <Div className={twMerge("input-group mb-5 w-full")}>
                                         <Input
                                             type="text"
+                                            name="firstName"
                                             className={twMerge(
                                                 "w-full",
                                                 "ps-2 pt-1 pb-1",
@@ -150,6 +173,7 @@ export default function CreateAccount() {
                                     <Div className={twMerge("input-group mb-5 w-full")}>
                                         <Input
                                             type="text"
+                                            name="lastName"
                                             className={twMerge(
                                                 "w-full",
                                                 "ps-2 pt-1 pb-1",
@@ -167,6 +191,7 @@ export default function CreateAccount() {
                                 <Div className={twMerge("input-group mb-5")}>
                                     <Input
                                         type="email"
+                                        name="email"
                                         className={twMerge(
                                             "ps-2 pt-1 pb-1",
                                             "input_email bg-white border border-[rgba(0,128,255,0.2)] text-gray-900 text-sm rounded-lg",
@@ -182,6 +207,7 @@ export default function CreateAccount() {
                                     <Div className='w-full'>
                                         <Div className={twMerge("input-group mb-5")}>
                                             <MaskedInput
+                                                name="contractNumber"
                                                 mask="+880 ____-______"
                                                 className={twMerge(
                                                     "w-full",
@@ -198,6 +224,7 @@ export default function CreateAccount() {
                                         <Div className={twMerge("input-group mb-5")}>
                                             <Input
                                                 type="password"
+                                                name="password"
                                                 className={twMerge(
                                                     "ps-2 pt-1 pb-1",
                                                     "input_password bg-white border border-[rgba(0,128,255,0.2)] text-gray-900 text-sm rounded-lg",
@@ -212,6 +239,7 @@ export default function CreateAccount() {
                                         <Div className={twMerge("input-group mb-5")}>
                                             <Input
                                                 type="password"
+                                                name="confrimPassword"
                                                 className={twMerge(
                                                     "ps-2 pt-1 pb-1",
                                                     "input_confrim_password bg-white border border-[rgba(0,128,255,0.2)] text-gray-900 text-sm rounded-lg",
@@ -296,7 +324,7 @@ export default function CreateAccount() {
                                     </Div>
                                 </Flex>
                                 <Div className="col-span-1 mb-3 mt-3">
-                                    <SecondaryButton className="cursor-pointer w-full">
+                                    <SecondaryButton type="submit" className="cursor-pointer w-full">
                                         <Span>Submit</Span>
                                     </SecondaryButton>
                                 </Div>

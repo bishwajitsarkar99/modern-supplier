@@ -30,7 +30,7 @@ export * from "./enums"
  * ```
  * const prisma = new PrismaClient()
  * // Fetch zero or more Users
- * const users = await prisma.users.findMany()
+ * const users = await prisma.user.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,38 +40,26 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model users
+ * Model User
  * //////////////////////////
  * //////////////////////////
  */
-export type users = Prisma.usersModel
+export type User = Prisma.UserModel
 /**
- * Model roles
+ * Model Session
  * //////////////////////////
  * //////////////////////////
  */
-export type roles = Prisma.rolesModel
+export type Session = Prisma.SessionModel
 /**
- * Model branch_categories
+ * Model Account
  * //////////////////////////
  * //////////////////////////
  */
-export type branch_categories = Prisma.branch_categoriesModel
+export type Account = Prisma.AccountModel
 /**
- * Model branches
+ * Model Verification
  * //////////////////////////
  * //////////////////////////
  */
-export type branches = Prisma.branchesModel
-/**
- * Model email_verifications
- * //////////////////////////
- * //////////////////////////
- */
-export type email_verifications = Prisma.email_verificationsModel
-/**
- * Model sessions
- * //////////////////////////
- * //////////////////////////
- */
-export type sessions = Prisma.sessionsModel
+export type Verification = Prisma.VerificationModel

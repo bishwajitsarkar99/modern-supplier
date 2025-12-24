@@ -8,10 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/users'
-export type * from './models/roles'
-export type * from './models/branch_categories'
-export type * from './models/branches'
-export type * from './models/email_verifications'
-export type * from './models/sessions'
+export type * from './models/User'
+export type * from './models/Session'
+export type * from './models/Account'
+export type * from './models/Verification'
 export type * from './commonInputTypes'

@@ -13,14 +13,14 @@ import {
 export function SectionCards() {
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      <Card className="@container/card">
+      <Card className="@container/card border border-gray-100 dark:border-gray-800">
         <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
+          <CardDescription className="text-emerald-700 font-bold">Total Revenue</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             $1,250.00
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge className="border border-rose-100" variant="outline">
               <IconTrendingUp />
               +12.5%
             </Badge>
@@ -35,14 +35,14 @@ export function SectionCards() {
           </div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      <Card className="@container/card border border-gray-100 dark:border-gray-800">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
+          <CardDescription className="text-emerald-700 font-bold">Total Expenses</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             1,234
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge className="border border-rose-100" variant="outline">
               <IconTrendingDown />
               -20%
             </Badge>
@@ -57,14 +57,14 @@ export function SectionCards() {
           </div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      <Card className="@container/card border border-gray-100 dark:border-gray-800">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription className="text-emerald-700 font-bold">Total Orders</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             45,678
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge className="border border-rose-100" variant="outline">
               <IconTrendingUp />
               +12.5%
             </Badge>
@@ -77,14 +77,14 @@ export function SectionCards() {
           <div className="text-muted-foreground">Engagement exceed targets</div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      <Card className="@container/card border border-gray-100 dark:border-gray-800">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription className="text-emerald-700 font-bold">Pending Orders</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             4.5%
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge className="border border-rose-100" variant="outline">
               <IconTrendingUp />
               +4.5%
             </Badge>

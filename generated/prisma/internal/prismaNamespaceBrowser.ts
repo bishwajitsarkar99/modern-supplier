@@ -51,12 +51,10 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  users: 'users',
-  roles: 'roles',
-  branch_categories: 'branch_categories',
-  branches: 'branches',
-  email_verifications: 'email_verifications',
-  sessions: 'sessions'
+  User: 'User',
+  Session: 'Session',
+  Account: 'Account',
+  Verification: 'Verification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -75,96 +73,65 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const UsersScalarFieldEnum = {
+export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  password: 'password',
-  role_id: 'role_id',
-  email_verified_at: 'email_verified_at',
-  contract_number: 'contract_number',
+  emailVerified: 'emailVerified',
   image: 'image',
-  remember_token: 'remember_token',
-  reference_email: 'reference_email',
-  login_email: 'login_email',
-  mailing_email: 'mailing_email',
+  contractNumber: 'contractNumber',
+  role: 'role',
   status: 'status',
-  branch_id: 'branch_id',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
-export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const RolesScalarFieldEnum = {
+export const SessionScalarFieldEnum = {
   id: 'id',
-  role_name: 'role_name',
-  status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-} as const
-
-export type RolesScalarFieldEnum = (typeof RolesScalarFieldEnum)[keyof typeof RolesScalarFieldEnum]
-
-
-export const Branch_categoriesScalarFieldEnum = {
-  id: 'id',
-  branch_category_name: 'branch_category_name',
-  created_by: 'created_by',
-  updated_by: 'updated_by',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-} as const
-
-export type Branch_categoriesScalarFieldEnum = (typeof Branch_categoriesScalarFieldEnum)[keyof typeof Branch_categoriesScalarFieldEnum]
-
-
-export const BranchesScalarFieldEnum = {
-  id: 'id',
-  branch_code: 'branch_code',
-  branch_type: 'branch_type',
-  branch_name: 'branch_name',
-  division_name: 'division_name',
-  district_name: 'district_name',
-  upazila_name: 'upazila_name',
-  city_name: 'city_name',
-  location: 'location',
-  branch_category_id: 'branch_category_id',
-  created_by: 'created_by',
-  updated_by: 'updated_by',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-} as const
-
-export type BranchesScalarFieldEnum = (typeof BranchesScalarFieldEnum)[keyof typeof BranchesScalarFieldEnum]
-
-
-export const Email_verificationsScalarFieldEnum = {
-  id: 'id',
-  user_id: 'user_id',
-  role_id: 'role_id',
-  branch_id: 'branch_id',
-  name: 'name',
-  email: 'email',
-  email_verified_session: 'email_verified_session',
-  account_create_session: 'account_create_session',
-  status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-} as const
-
-export type Email_verificationsScalarFieldEnum = (typeof Email_verificationsScalarFieldEnum)[keyof typeof Email_verificationsScalarFieldEnum]
-
-
-export const SessionsScalarFieldEnum = {
-  id: 'id',
-  user_id: 'user_id',
   expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
+  token: 'token',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  userId: 'userId'
 } as const
 
-export type SessionsScalarFieldEnum = (typeof SessionsScalarFieldEnum)[keyof typeof SessionsScalarFieldEnum]
+export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const AccountScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  providerId: 'providerId',
+  userId: 'userId',
+  accessToken: 'accessToken',
+  refreshToken: 'refreshToken',
+  idToken: 'idToken',
+  accessTokenExpiresAt: 'accessTokenExpiresAt',
+  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
+  scope: 'scope',
+  password: 'password',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
+export const VerificationScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
 export const SortOrder = {

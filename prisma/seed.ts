@@ -1,16 +1,18 @@
 // index.ts
 import prisma  from '../lib/prisma';
-import {roleSeeders} from './seeds/roles.seed'
 import { userSeeders } from './seeds/users.seed';
-import {branchCtegoriesSeeder} from './seeds/branchCategories.seed'
-import {branchesSeeder} from './seeds/branches.seed'
+import { accountSeeders } from './seeds/accounts.seed';
+import { sessionSeeders } from './seeds/sessions.seed';
+import { verificationSeeders } from './seeds/verifications.seed';
+
 
 async function main() {
 
-  await roleSeeders();
   await userSeeders();
-  await branchCtegoriesSeeder()
-  await branchesSeeder()
+  await accountSeeders();
+  await sessionSeeders();
+  await verificationSeeders();
+
 }
 
 main()
