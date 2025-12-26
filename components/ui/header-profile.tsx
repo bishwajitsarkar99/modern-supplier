@@ -45,9 +45,9 @@ export default function HeaderProfile({
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
-                    <Avatar className="h-8 w-8 rounded-lg grayscale">
+                    <Avatar className="h-8 w-8 rounded-full grayscale">
                         <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback className="rounded-lg">B</AvatarFallback>
+                        <AvatarFallback className="rounded-full"></AvatarFallback>
                     </Avatar>
                     <IconDotsVertical className="ml-auto size-4" />
                 </SidebarMenuButton>

@@ -3,8 +3,6 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import Main from "@/components/main/main"
 import { SiteHeader } from "@/components/site-header"
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import RouteChangeLoader from "@/components/route-change-loader/routeChangeLoader";
 
 import {

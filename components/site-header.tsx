@@ -49,20 +49,19 @@ export function SiteHeader() {
               <span className="me-8">Search</span>
             </SecondaryButton>
           </div>
-          <Div variant="ghost" asChild size="sm" className="hidden sm:flex max-w-20 h-full ms-5">
-            <Div
-              className="bg-white hover:bg-gray-300 shadow-md text-accent-foreground rounded-full font-extrabold cursor-pointer border border-neutral-100"
-              variant="ghost"
+          <div className="hidden sm:flex max-w-20 h-full ms-5">
+            <div
+              className="size-4 bg-white shadow-sm text-accent-foreground rounded-full font-extrabold cursor-pointer border border-neutral-100"
             >
-              <HeaderProfile user={{
+              B
+              {/* <HeaderProfile user={{
                 name: "Bishwajit Sarkar",
-                email: "bishwajit@example.com",
-                avatar: "/avatar.png",
-              }} />
-            </Div>
-          </Div>
+                email: "bishwajitsarker99@gmail.com",
+                avatar: "/facicon.svg",
+              }} /> */}
+            </div>
+          </div>
         </div>
-        
       </div>
     </header>
   )

@@ -1,15 +1,12 @@
-"use server"
-
-import { AppSidebar } from "@/components/app-sidebar"
+import Sidebar from "@/components/sibebar/sidebar";
 import Main from "@/components/main/main"
 import { SiteHeader } from "@/components/site-header"
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import RouteChangeLoader from "@/components/route-change-loader/routeChangeLoader";
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import NavBarWrapper from '@/components/page-navbar-url/navbar-wrapper'
 
 export default async function ProductLayout({
   children,
@@ -27,12 +24,13 @@ export default async function ProductLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" collapsible="icon" />
+      <Sidebar variant="inset" collapsible="icon" />
 
       <SidebarInset>
         <SiteHeader />
         <Main className="p-0 mt-10">
           <RouteChangeLoader />
+          <NavBarWrapper />
           {children}
         </Main>
       </SidebarInset>
